@@ -6,40 +6,40 @@ Use db_Ejercicio3;
 
 CREATE TABLE tbProfesores(
 id_profesor varchar(36) default(UUID()) primary key not null,
-nombre varchar(100),
-apellido varchar(100),
-correo_electronico varchar(100)
+nombre varchar(100) not null,
+apellido varchar(100) not null,
+correo_electronico varchar(100) unique not null
 );
 
 CREATE TABLE tbMaterias(
 id_materia varchar(36) default(UUID()) primary key,
-nombre_materia varchar(100),
-grupo_materia int,
+nombre_materia varchar(100) not null,
+grupo_materia int not null,
 id_profesor VARCHAR(36),
-cupos int
+cupos int not null
 );
 
 CREATE TABLE tbCalificaciones(
 id_calificacion varchar(36) default(UUID()) primary key,
 id_inscripcion VARCHAR(36),
-calificacion_final decimal(5,2),
-fecha_calificacion date
+calificacion_final decimal(5,2) not null,
+fecha_calificacion date not null
 );
 
 CREATE TABLE tbAlumnos(
 id_alumno varchar(36) default(UUID()) primary key,
-carnet_alumno varchar(10),
-nombre_alumno varchar(50),
-apellido_alumno varchar(50),
-edad_alumno int
+carnet_alumno varchar(10) not null,
+nombre_alumno varchar(50) not null,
+apellido_alumno varchar(50) not null,
+edad_alumno int not null
 );
 
 CREATE TABLE tbInscripciones(
 id_inscripcion varchar(36) default(UUID()) primary key,
-id_alumno VARCHAR(36),
+id_alumno VARCHAR(36) ,
 id_materia VARCHAR(36),
-fecha_inscripcion date,
-estado enum('Activo','Inactivo')
+fecha_inscripcion date not null,
+estado enum('Activo','Inactivo') not null
 );
 
 /*Referencias*/  
@@ -67,6 +67,20 @@ ALTER TABLE tbInscripciones
 ADD CONSTRAINT FK_Inscripcion_Materia 
 FOREIGN KEY (id_materia) 
 REFERENCES tbMaterias(id_materia);
+
+/*Restricciones*/
+/*Tabla calificaciones*/
+ALTER TABLE tbCalificaciones
+ADD CONSTRAINT fecha_calificacion_check
+CHECK (fecha_calificacion <= CURRENT_DATE());
+
+ALTER TABLE tbInscripciones
+ADD CONSTRAINT fecha_inscripcion_check
+CHECK (fecha_inscripcion <= CURRENT_DATE());
+
+ALTER TABLE tbAlumnos
+ADD CONSTRAINT edad_alumno_check
+CHECK (edad_alumno >= 0);
 
 /*Procedimentos*/
 
